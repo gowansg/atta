@@ -1,4 +1,5 @@
 require "data_mapper"
+require "dm-rspec"
 require_relative "../config/config"
 Dir[File.join(File.dirname(__FILE__),
   "..",
@@ -7,8 +8,10 @@ Dir[File.join(File.dirname(__FILE__),
   "*.rb")].each{|file| require file}
 
 RSpec.configure do |config|
-	config.before(:suite) do
-	  App::Config.SetupDataMapper("postgres://gowansg:@localhost:5432/atta_test")
+  config.before(:suite) do
+    App::Config.SetupDataMapper("postgres://gowansg:@localhost:5432/atta_test")
 	  config.pattern = "spec/*_spec.rb"
   end
+
+  config.include(DataMapper::Matchers)
 end 
