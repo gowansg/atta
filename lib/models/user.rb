@@ -4,5 +4,6 @@ class User
   include DataMapper::Resource
 
   property :id, Serial
-  property :username, String
+  property :username, String, :length => 1..50, :allow_blank => false
+  property :active, Boolean
 end

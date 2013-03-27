@@ -1,6 +1,6 @@
 require 'bundler'
 require './lib/atta'
-require 'data_mapper'
+#require 'data_mapper'
 #require all the models
 # Dir[File.join(File.dirname(__FILE__),
 #   'lib',

@@ -5,11 +5,10 @@ class TimeEntry
   include DataMapper::Resource
   
   property :id, Serial
-  property :start_time, DateTime
-  property :end_time, DateTime
-  property :task_id, Integer
-  property :discriminator, Integer
-  property :creation_time, DateTime
+  property :start_time, DateTime, :required => true
+  property :end_time, DateTime, :required => true
+  property :type, Enum[:manual, :timed], :required => true, :default => :timed
+  property :created_on, DateTime, :required => true
 
   belongs_to :task
 end
