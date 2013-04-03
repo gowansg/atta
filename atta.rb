@@ -16,7 +16,7 @@ class Atta < Sinatra::Base
     end
 
     def request_id_from(provider)
-      unless session[:authenticated]
+      unless session[:username] = ""
         begin
           id_request = openid_consumer.begin(provider)
         rescue
@@ -35,6 +35,10 @@ class Atta < Sinatra::Base
     end
   end
 
+  before do
+    redirect "/" unless session[:authenticated]
+  end
+
   get "/" do
     redirect "/home" if session[:authenticated]
     "Login or Sign Up"
@@ -45,7 +49,8 @@ class Atta < Sinatra::Base
       provider = Rack::Utils.parse_query(request.query_string)["provider"]
       request_id_from(provider)
     elsif login_successful?
-      session[:authenticated] = true
+      session[:username] = 
+        User.find(:username => request.query_string["username"])
     end
 
     redirect "/home"
