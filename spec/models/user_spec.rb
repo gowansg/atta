@@ -30,7 +30,7 @@ describe User do
   end
 
   it "can create new projects" do
-    project = User.get(1).create_project()
+    project = Fabricate(:user).create_project()
     project.should_not be_nil
     project.users.first.should eql User.get(1)
   end

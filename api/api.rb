@@ -1,7 +1,8 @@
 require 'sinatra'
 require 'openid'
+require 'json'
 
-class Api < Sinatra::Base
+class API < Sinatra::Base
 
   # All DELETE requests
   delete '/tags/:tag_id' do
@@ -39,19 +40,19 @@ class Api < Sinatra::Base
   end
   
   get '/tags' do
-
+    Tag.all.to_json
   end
 
   get '/tags/:tag_id' do
-
+    Tag.get(params[:tag_id]).to_json
   end
   
   get '/users/:user_id' do
-
+    User.get(params[:user_id]).to_json
   end
 
   get '/users/:user_id/projects' do
-
+    User.get(params[:user_id]).projects.to_json
   end
 
   get '/users/:user_id/projects/:project_id' do
@@ -78,7 +79,7 @@ class Api < Sinatra::Base
 
   end
 
-  get '/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/' << 
+  get '/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/' <<
     ':time_entry_id' do
 
   end
@@ -137,7 +138,7 @@ class Api < Sinatra::Base
 
   end
 
-  put '/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/' << 
+  put '/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/' <<
     ':time_entry_id' do
 
   end

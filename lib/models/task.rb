@@ -7,7 +7,6 @@ class Task
   property :id, Serial
   property :name, String, :length => 0..50
   property :description, String, :length => 0..500
-  property :project_id, Integer, :required => true
   
   belongs_to :project
   has n, :time_entries
