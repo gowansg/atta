@@ -15,6 +15,7 @@ describe API do
 
   before :all do
     @user = Fabricate(:user)
+    @project = Fabricate(:project, :users => [@user])
     @tags = []
     10.times { @tags << Fabricate(:tag) }
   end
@@ -45,31 +46,54 @@ describe API do
 
     context "users/:user_id/projects" do
       it "returns all the projects the specified user contributes to" do
-        @user.projects = [
+        projects = [
           Fabricate(:project_x, users: [@user]), 
-          Fabricate(:project_runway, users: [@user])
+          Fabricate(:project_with_three_tasks, users: [@user])
         ]
-
+        @user.projects = projects
+        @user.save
         get "/users/#{@user.id}/projects"
-        last_response.body.should eql @user.projects.to_json
+        last_response.body.should eql projects.to_json
       end
     end
 
     context "users/:user_id/projects/:project_id" do
-      it "" do
-
+      it "returns the user's project matching the specified project id" do
+        @user.projects = [@project]
+        @user.reload
+        get "users/#{@user.id}/projects/#{@project.id}"
+        last_response.body.should eql @project.to_json
       end    
     end
 
     context "users/:user_id/projects/:project_id/contributors" do
-      it "" do
-
+      it "returns all the contributors to the specfied project" do
+        @user.projects = [Fabricate(:project_with_five_users)]
+        @user.reload
+        get "users/#{@user.id}/projects/#{@user.projects.first.id}/contributors"
+        last_response.body.should eql @user.projects.first.users.to_json
       end    
     end
 
-    context "users/:user_id/projects/:project_id/tasks" do
-      it "" do
+    context "users/:user_id/projects/:project_id/tags" do
+        it "returns all of the specified projects tags" do
+        @user.projects = [Fabricate(:project_with_tags)]
+        @user.reload
+        get "users/#{@user.id}/projects/#{@user.projects.first.id}/tags"
+        last_response.body.should eql @user.projects
+          .first
+          .tasks
+          .select { |t| t.tags }
+          .to_json
+      end
+    end
 
+    context "users/:user_id/projects/:project_id/tasks" do
+      it "returns all tasks belonging to the specified project" do
+        @user.projects = [Fabricate(:project_with_three_tasks)]
+        @user.reload
+        get "users/#{@user.id}/projects/#{@user.projects.first.id}/tasks"
+        last_response.body.should eql @user.projects.first.tasks.to_json
       end
     end
 

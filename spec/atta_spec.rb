@@ -12,20 +12,20 @@
 #     Atta.new
 #   end
 
-  # before :all do
-  #   @transaction = 
-  #     DataMapper::Transaction.new(DataMapper.repository(:default).adapter)
+#   # before :all do
+#   #   @transaction = 
+#   #     DataMapper::Transaction.new(DataMapper.repository(:default).adapter)
 
-  #   @transaction.begin
+#   #   @transaction.begin
 
-  #   @user = User.first_or_create(:username => "batman")
-  #   @project = @user.create_project(:name => "Spec Writing Project")   
-  #   @project.save.should eql true
-  # end
+#   #   @user = User.first_or_create(:username => "batman")
+#   #   @project = @user.create_project(:name => "Spec Writing Project")   
+#   #   @project.save.should eql true
+#   # end
 
-  # after :all do
-  #   @transaction.rollback
-  # end
+#   # after :all do
+#   #   @transaction.rollback
+#   # end
 
 #   describe "GET /" do
 #     context "when user is unauthenticated" do

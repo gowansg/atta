@@ -13,18 +13,6 @@ class Project
   property :deleted_on, DateTime
 
   has n, :users, :through => Resource
-  has n, :tasks
-
-  def add_contributors(*contributors)
-    contributors.each { |c| users.add(c) unless users.include?(c) }
-  end
-
-  def remove_contributors()
-
-  end
-
-  def ==(object)
-    return true if self == object
-    return @id == object.id
-  end
+  has n, :tasks, :through => Resource
+  has n, :tags, self, :through => :tasks
 end
