@@ -1,10 +1,11 @@
 describe User do
   
   it { should validate_length_of(:username).within(1..50) }
+  it { should validate_length_of(:email).within(5..75) }
 
   describe :username do
     it "cannot be whitespace only" do
-      user = User.new(:username => "      ")
+      user = Fabricate(:user, username: "      ")
       user.valid?.should eql false
 
       user.username = "\n"
@@ -21,21 +22,11 @@ describe User do
     end
 
     it "cannot be longer than 50 characters" do
-      User.new(:username => "a" * 51).valid?.should eql false    
+      Fabricate(:user, username: "a" * 51).valid?.should eql false    
     end
 
     it "can be between 1 and 50 characters" do
-      User.new(:username => "b").valid?.should eql true
+      Fabricate(:user, username: "b").valid?.should eql true
     end
-  end
-
-  it "can create new projects" do
-    project = Fabricate(:user).create_project()
-    project.should_not be_nil
-    project.users.first.should eql User.get(1)
-  end
-
-  it "can add contributors to projects" do
-
   end
 end

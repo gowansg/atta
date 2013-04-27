@@ -8,7 +8,7 @@ describe TimeEntry do
 
   describe :type do
     it "should default to :timed" do
-      TimeEntry.new().type.should eql :timed
+      Fabricate(:time_entry).type.should eql :timed
     end
   end
 end

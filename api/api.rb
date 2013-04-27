@@ -56,47 +56,32 @@ class API < Sinatra::Base
   end
 
   get '/users/:user_id/projects/:project_id' do
-    Project.first(:id => params[:project_id],
-      :users => { :id => params[:user_id] })
-      .to_json  
+    Project.get(params[:project_id]).to_json  
   end
 
   get '/users/:user_id/projects/:project_id/contributors' do
-    User.first(:id => params[:user_id])
-      .projects
-      .first(:id => params[:project_id])
-      .users
-      .to_json
+    Project.get(params[:project_id]).users.to_json
   end
 
   get '/users/:user_id/projects/:project_id/tags' do
-    User.first(:id => params[:user_id])
-      .projects
-      .first(:id => params[:project_id])
-      .tasks
-      .select { |t| t.tags }
-      .to_json
+    Project.get(params[:project_id]).tasks.collect { |t| t.tags }.to_json
   end
 
   get '/users/:user_id/projects/:project_id/tasks' do
-    User.first(:id => params[:user_id])
-      .projects
-      .first(:id => params[:project_id])
-      .tasks
-      .to_json
+    Project.get(params[:project_id]).tasks.to_json
   end
 
   get '/users/:user_id/projects/:project_id/tasks/:task_id' do
-
+    Task.get(params[:task_id]).to_json
   end
 
   get '/users/:user_id/projects/:project_id/tasks/:task_id/time_entries' do
-
+    Task.get(params[:task_id]).time_entries.to_json
   end
 
   get '/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/' <<
     ':time_entry_id' do
-
+    TimeEntry.get(params[:time_entry_id]).to_json
   end
 
   #All POST requests

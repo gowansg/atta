@@ -4,4 +4,5 @@ Fabricator(:time_entry) do
   end_time { |attrs| attrs[:start_time] + (60 * 15) }
   created_on { |attrs| attrs[:start_time] }
   type :timed
+  task
 end

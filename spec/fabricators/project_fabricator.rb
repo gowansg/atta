@@ -1,26 +1,27 @@
 Fabricator(:project) do
   id { sequence(:project) }
-  name 'Test Project'
-  description 'A descriptive description'
+  name "Test Project"
+  description "A descriptive description"
+  users(count: 1) { |attrs| Fabricate(:user) }
 end
 
-Fabricator(:project_x, from: :project) do
-  name "Project X"
-  description "Something something something"
+Fabricator(:project_with_tasks, from: :project) do
+  name "Project with some work did"
+  tasks(count: 3) { |attrs| Fabricate(:task, project_id: attrs[:id]) }
 end
 
-
-Fabricator(:project_with_tags, from: :project) do
-  name "Project Runway"
-  tasks(count: 1) { |attrs, i| Fabricate(:task, :tags => [Fabricate(:tag)]) }
+Fabricator(:project_with_tags, from: :project_with_tasks) do
+  tasks(count: 4) { |attrs| Fabricate(:task_with_tags, project_id: attrs[:id]) }
 end
+
 
 Fabricator(:project_with_five_users, from: :project) do
-  name "Project Gotham"
-  users(count: 5) { |attrs, i| Fabricate(:user, username: "test user#{i}") }
+  name "A popular project"
+  users(count: 5) { |attrs| Fabricate(:user, username: "user#{attrs[:id]}") }
 end
 
-Fabricator(:project_with_three_tasks, from: :project) do
-  name "Project with tasks"
-  tasks(count: 3) { |attrs, i| Fabricate(:task) }
+Fabricator(:project_with_time_entries, from: :project) do
+  tasks(count: 3) do |attrs| 
+    Fabricate(:task_with_time_entries, project_id: attrs[:id])
+  end
 end

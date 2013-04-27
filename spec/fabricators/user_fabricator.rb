@@ -1,11 +1,12 @@
 Fabricator(:user) do
   id { sequence(:user) }
-  username "Dr. Hand Banana"
+  username { |attrs| "user#{attrs[:id]}" }
+  email { |attrs| "#{attrs[:username]}@email.com" }
 end
 
-Fabricator(:test_user, from: :user) do
-
-end
-
-Fabricator(:gowansg, from: :user) do
+Fabricator(:user_with_two_projects, from: :user) do
+  projects(count: 2) do |i| 
+    Fabricate(:project, description: "existing project#{i}", 
+      project_user_id: attrs[:id] )
+  end
 end
