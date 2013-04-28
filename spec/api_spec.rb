@@ -1,6 +1,6 @@
 require "test/unit"
 require "rack/test"
-require 'json'
+require "json"
 require_relative "../api/api"
 
 set :environment, :test
@@ -107,7 +107,8 @@ describe API do
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
       "time_entries" do
-      it "" do
+
+      it "returns all time entries for the specified task" do
         project = Fabricate(:project_with_time_entries)
         get "users/#{project.users.first.id}/projects/#{project.id}/tasks/" <<
           "#{project.tasks.first.id}/time_entries"
@@ -117,7 +118,8 @@ describe API do
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
       "time_entries/:time_entry_id" do
-      it "" do
+
+      it "returns the specified time entry" do
         project = Fabricate(:project_with_time_entries)
         task = project.tasks.first
         get "users/#{project.users.first.id}/projects/#{project.id}/tasks/" <<
@@ -128,6 +130,59 @@ describe API do
   end
 
   describe "POST" do
+    context "/tags" do
+      it "returns the newly created tag" do
+        name = "test"
+        post "/tags", :name => name
+        last_response.body.should eql Tag.first(:name => name).to_json
+      end
+    end
 
+    context "/users" do
+      it "creates and returns a new user" do
+        user = Fabricate.build(:user, username: "POST User")
+        post "/users", user.attributes
+        last_response.body.should eql User.first(:email => user.email).to_json
+      end
+    end
+
+    context "/users/:user_id/projects" do
+      it "creates and returns the project for the specified user" do
+        post "/users/#{@user.id}/projects", 
+          Fabricate.build(:project, name: "POST project").attributes
+        last_response.body.should eql @user.projects.last.to_json
+      end
+    end
+
+    context "/users/:user_id/projects/:project_id/contributors" do
+    end
+
+    context "/users/:user_id/projects/:project_id/tags" do
+    end
+
+    context "/users/:user_id/projects/:project_id/tasks" do
+      it "returns a task after creating and assigning it to the " << 
+        "given project" do
+        post "/users/#{@user.id}/projects/#{@user.projects.first.id}/tasks",
+          Fabricate.build(:task, name: "POST task").attributes
+        last_response.body.should eql @user.projects.first.tasks.last.to_json
+      end
+    end
+
+    context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
+      "time_entries" do
+      it "returns a time entry after creating it and assigning it to the " << 
+        "given task" do
+        project = @user.projects.first
+        post "/users/#{@user.id}/projects/#{project.id}/tasks/" << 
+          "#{project.tasks.first.id}/time_entries",
+          Fabricate.build(:time_entry).attributes
+        last_response.body.should eql project.tasks
+          .first
+          .time_entries
+          .last
+          .to_json
+      end
+    end
   end
 end

@@ -1,5 +1,4 @@
 Fabricator(:tag) do
-  id { sequence(:tag) }
   name { |attrs| "tag#{attrs[:id]}" }
 end
 

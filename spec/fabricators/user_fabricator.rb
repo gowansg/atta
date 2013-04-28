@@ -1,5 +1,4 @@
 Fabricator(:user) do
-  id { sequence(:user) }
   username { |attrs| "user#{attrs[:id]}" }
   email { |attrs| "#{attrs[:username]}@email.com" }
 end

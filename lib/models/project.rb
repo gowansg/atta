@@ -7,9 +7,9 @@ class Project
   property :name, String, :length => 0..50
   property :description, String, :length => 0..500
   property :created_on, DateTime, :required => true, 
-    :default => lambda { |r, p| Time.now }, :writer => :private
+    :default => Time.now, :writer => :private
 
-  property :deleted, Boolean
+  property :deleted, Boolean, :default => false
   property :deleted_on, DateTime
 
   has n, :users, :through => Resource

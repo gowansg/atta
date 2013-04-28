@@ -1,5 +1,4 @@
 Fabricator(:project) do
-  id { sequence(:project) }
   name "Test Project"
   description "A descriptive description"
   users(count: 1) { |attrs| Fabricate(:user) }
