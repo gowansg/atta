@@ -139,15 +139,25 @@ class API < Sinatra::Base
 
   #All PUT requests
   put "/tags/:tag_id" do
-
+    tag = Tag.get(params[:tag_id])
+    tag.update(:name => params[:name] || tag.name)
+    tag.to_json if tag.valid?
   end
 
   put "/users/:user_id" do
-
+    user = User.get(params[:user_id])
+    user.update(:username => params[:username] || user.username,
+      :active => params[:active] || user.active,
+      :email => params[:email] || user.email)
+    user.to_json if user.valid?
   end
 
   put "/users/:user_id/projects/:project_id" do
-
+    project = Project.get(params[:project_id])
+    project.update(:name => params[:name] || project.name,
+      :description => params[:description] || project.description,
+      :deleted => params[:deleted] || project.deleted)
+    project.to_json if project.valid?
   end
 
   put "/users/:user_id/projects/:project_id/contributors/:contributor_id" do

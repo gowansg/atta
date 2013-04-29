@@ -9,7 +9,7 @@ class Project
   property :created_on, DateTime, :required => true, 
     :default => Time.now, :writer => :private
 
-  property :deleted, Boolean, :default => false
+  property :deleted, Boolean, :default => false, :required => true
   property :deleted_on, DateTime
 
   has n, :users, :through => Resource

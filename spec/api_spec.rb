@@ -112,6 +112,7 @@ describe API do
         project = Fabricate(:project_with_time_entries)
         get "users/#{project.users.first.id}/projects/#{project.id}/tasks/" <<
           "#{project.tasks.first.id}/time_entries"
+        
         last_response.body.should eql project.tasks.first.time_entries.to_json
       end
     end
@@ -124,6 +125,7 @@ describe API do
         task = project.tasks.first
         get "users/#{project.users.first.id}/projects/#{project.id}/tasks/" <<
           "#{task.id}/time_entries/#{task.time_entries.first.id}"
+        
         last_response.body.should eql task.time_entries.first.to_json
       end
     end
@@ -155,6 +157,7 @@ describe API do
     end
 
     context "/users/:user_id/projects/:project_id/contributors" do
+
     end
 
     context "/users/:user_id/projects/:project_id/tags" do
@@ -163,6 +166,7 @@ describe API do
     context "/users/:user_id/projects/:project_id/tasks" do
       it "returns a task after creating and assigning it to the " << 
         "given project" do
+        
         post "/users/#{@user.id}/projects/#{@user.projects.first.id}/tasks",
           Fabricate.build(:task, name: "POST task").attributes
         last_response.body.should eql @user.projects.first.tasks.last.to_json
@@ -171,18 +175,75 @@ describe API do
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
       "time_entries" do
+
       it "returns a time entry after creating it and assigning it to the " << 
         "given task" do
+
         project = @user.projects.first
         post "/users/#{@user.id}/projects/#{project.id}/tasks/" << 
           "#{project.tasks.first.id}/time_entries",
           Fabricate.build(:time_entry).attributes
+        
         last_response.body.should eql project.tasks
           .first
           .time_entries
           .last
           .to_json
       end
+    end
+  end
+
+  describe "PUT" do
+    context "/tags/:tag_id" do
+      it "returns the updated tag" do
+        tag = Tag.first
+        name = tag.name = "updated tag"
+        put "/tags/#{tag.id}", tag.attributes
+        last_response.body.should eql tag.to_json
+        tag.name.should eql name
+      end
+    end
+
+    context "/users/:user_id" do
+      it "returns the updated user" do
+        @user.active = false
+        @user.username = username = "another test passed"
+        put "/users/#{@user.id}", @user.attributes
+        last_response.body.should eql @user.to_json
+        @user.active.should eql false
+        @user.username.should eql username
+      end
+    end
+
+    context "/users/:user_id/projects/:project_id" do
+      it "returns the updated project" do
+        name = "an updated name"
+        description = "an updated description"
+        put "/users/#{@project.users.first.id}/projects/#{@project.id}",
+          :name => name,
+          :description => description
+        @project.reload
+        last_response.body.should eql @project.to_json
+        @project.name.should eql name
+        @project.description.should eql description
+      end
+    end
+
+    context "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
+
+    end
+    
+    context "/users/:user_id/projects/:project_id/tags/:tag_id" do
+
+    end
+
+    context "/users/:user_id/projects/:project_id/tasks/:task_id" do
+
+    end
+
+    context "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" <<
+      ":time_entry_id" do
+
     end
   end
 end
