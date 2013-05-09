@@ -31,7 +31,7 @@ describe API do
     context "/tags" do
       it "returns all tags" do
         get "/tags"
-        last_response.body.should == @tags.to_json
+        last_response.body.should eql @tags.to_json
       end
     end
     
@@ -39,7 +39,7 @@ describe API do
       it "returns the tag with the specified id" do
         @tags.each_index do |i|
           get "/tags/#{i + 1}"
-          last_response.body.should == @tags[i].to_json
+          last_response.body.should eql @tags[i].to_json
         end
       end
     end 
@@ -229,21 +229,51 @@ describe API do
       end
     end
 
-    context "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
-
-    end
-    
-    context "/users/:user_id/projects/:project_id/tags/:tag_id" do
-
-    end
-
     context "/users/:user_id/projects/:project_id/tasks/:task_id" do
-
+      it "updates the specified task" do
+        task = Fabricate(:task, name: "put test")
+        project = task.project
+        user = project.users.first
+        updated_name = "put test 2"
+        put "/users/#{user.id}/projects/#{project.id}/tasks/#{task.id}",
+          :name => updated_name
+        task.reload
+        last_response.body.should eql task.to_json
+        task.name.should eql updated_name
+      end
     end
 
-    context "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" <<
-      ":time_entry_id" do
+    context "/users/:user_id/projects/:project_id/tasks/:task_id/" <<
+      "time_entries/:time_entry_id" do
+      
+      it "updates the specified time entry" do
+        time_entry = Fabricate(:time_entry)
+        task = time_entry.task
+        user = task.project.users.first
+        end_time = Time.now + (60 * 60)
+        put "/users/#{user.id}/projects/#{task.project.id}/tasks/#{task.id}/" <<
+          "time_entries/#{time_entry.id}", 
+          :end_time => end_time
 
+        time_entry.reload
+        last_response.body.should eql time_entry.to_json
+        time_entry.end_time = end_time
+      end
+    end
+  end
+
+  describe "DELETE" do
+    context "/tags/:tag_id" do
+      it "" do
+        task = Fabricate(:task_with_tags, description: "delete tag task")
+        tag = task.tags.first
+        delete "tags/#{tag.id}"
+        TagTask.all(:tag => tag).should == []
+        Tag.get(tag.id).should eql nil
+        Task.get(task.id).should eql task
+        task.should_not eql nil
+        last_response.body.should eql true.to_json
+      end
     end
   end
 end

@@ -1,12 +1,17 @@
 require "sinatra"
+require "sinatra/contrib"
 require "openid"
 require "json"
 
 class API < Sinatra::Base
+  register Sinatra::RespondWith
+  #respond_to :json
 
   # All DELETE requests
   delete "/tags/:tag_id" do
-
+    tag = Tag.get(params[:tag_id])
+    tag.tasks.all.destroy
+    tag.destroy.to_json 
   end
 
   delete "/users/:user_id" do
@@ -160,20 +165,18 @@ class API < Sinatra::Base
     project.to_json if project.valid?
   end
 
-  put "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
-
-  end
-  
-  put "/users/:user_id/projects/:project_id/tags/:tag_id" do
-
-  end
-
   put "/users/:user_id/projects/:project_id/tasks/:task_id" do
-
+    task = Task.get(params[:task_id])
+    task.update(:name => params[:name] || task.name, 
+      :description => params[:description] || task.description)
+    task.to_json if task.valid?
   end
 
   put "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" <<
     ":time_entry_id" do
 
+    time_entry = TimeEntry.get(params[:time_entry_id])
+    time_entry.update(:end_time => params[:end_time] || time_entry.end_time)
+    time_entry.to_json if time_entry.valid?
   end
 end

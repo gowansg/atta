@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'sinatra', :git => 'git://github.com/sinatra/sinatra.git'
+gem 'sinatra-contrib', :git => 'git://github.com/sinatra/sinatra-contrib.git'
 gem 'ruby-openid'
 gem 'data_mapper'
 gem 'dm-postgres-adapter'
