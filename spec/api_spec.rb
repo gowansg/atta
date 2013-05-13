@@ -264,7 +264,7 @@ describe API do
 
   describe "DELETE" do
     context "/tags/:tag_id" do
-      it "" do
+      it "deletes the specified tag" do
         task = Fabricate(:task_with_tags, description: "delete tag task")
         tag = task.tags.first
         delete "tags/#{tag.id}"
@@ -273,6 +273,32 @@ describe API do
         Task.get(task.id).should eql task
         task.should_not eql nil
         last_response.body.should eql true.to_json
+      end
+    end
+
+    context "/users/:user_id" do
+      it "deletes the specified user" do
+        user = Fabricate(:user, username: "delete test")
+        User.get(user.id).should_not eql nil
+        delete "users/#{user.id}"
+        last_response.body.should eql true.to_json
+        User.get(user.id).should eql nil
+      end
+    end
+
+    context "/users/:user_id/projects/:project_id/" do
+      it "deletes the specified project" do
+        project = Fabricate(:project_with_tasks, name: "project delete test")
+        Project.get(project.id).should_not eql nil
+        delete "users/#{project.users.first.id}/projects/#{project.id}"
+        last_response.body.should eql true.to_json
+        Project.get(project.id).should eql nil
+      end
+    end
+
+    context "" do
+      it "" do
+
       end
     end
   end

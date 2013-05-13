@@ -14,5 +14,5 @@ class Project
 
   has n, :users, :through => Resource
   has n, :tasks, :through => Resource
-  has n, :tags, self, :through => :tasks
+  has n, :tags, :through => Resource
 end

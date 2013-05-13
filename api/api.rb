@@ -15,11 +15,17 @@ class API < Sinatra::Base
   end
 
   delete "/users/:user_id" do
-
+    user = User.get(params[:user_id])
+    user.projects.all.destroy
+    user.destroy.to_json
   end
 
   delete "/users/:user_id/projects/:project_id" do
-
+    project = Project.get(params[:project_id])
+    project.tags.all.destroy
+    project.tasks.all.destroy
+    project.users.all.destroy
+    project.destroy.to_json
   end
 
   delete "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
