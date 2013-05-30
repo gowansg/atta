@@ -9,10 +9,9 @@ Fabricator(:project_with_tasks, from: :project) do
   tasks(count: 3) { |attrs| Fabricate(:task, project_id: attrs[:id]) }
 end
 
-Fabricator(:project_with_tags, from: :project_with_tasks) do
-  tasks(count: 4) { |attrs| Fabricate(:task_with_tags, project_id: attrs[:id]) }
+Fabricator(:project_with_tags, from: :project) do
+  tags(count: 4) { |attrs| Fabricate(:tag) }
 end
-
 
 Fabricator(:project_with_five_users, from: :project) do
   name "A popular project"

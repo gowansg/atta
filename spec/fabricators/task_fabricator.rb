@@ -5,7 +5,7 @@ Fabricator(:task) do
 end
 
 Fabricator(:task_with_tags, from: :task) do
-  tags(count: 4) { |attrs, i| Fabricate(:tag) }
+  tags(count: 4) { |attrs| Fabricate(:tag) }
 end
 
 Fabricator(:task_with_time_entries, from: :task) do

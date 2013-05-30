@@ -29,14 +29,16 @@ class API < Sinatra::Base
   end
 
   delete "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
-
+    ProjectUser.all(:user_id => params[:contributor_id], 
+      :project_id => params[:project_id]).destroy.to_json
   end
 
   delete "/users/:user_id/projects/:project_id/tags/:tag_id" do
-
+    ProjectTag.all(:project_id => params[:project_id], 
+      :tag_id => params[:tag_id]).destroy.to_json
   end
 
-  delete "/users/:user_id/projects/:project_id/tasks/:task_id/" do
+  delete "/users/:user_id/projects/:project_id/tasks/:task_id" do
 
   end
 
@@ -75,7 +77,7 @@ class API < Sinatra::Base
   end
 
   get "/users/:user_id/projects/:project_id/tags" do
-    Project.get(params[:project_id]).tasks.collect { |t| t.tags }.to_json
+    Project.get(params[:project_id]).tags.to_json
   end
 
   get "/users/:user_id/projects/:project_id/tasks" do
