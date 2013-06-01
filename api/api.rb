@@ -30,21 +30,29 @@ class API < Sinatra::Base
 
   delete "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
     ProjectUser.all(:user_id => params[:contributor_id], 
-      :project_id => params[:project_id]).destroy.to_json
+                    :project_id => params[:project_id])
+      .destroy
+      .to_json
   end
 
   delete "/users/:user_id/projects/:project_id/tags/:tag_id" do
     ProjectTag.all(:project_id => params[:project_id], 
-      :tag_id => params[:tag_id]).destroy.to_json
+                   :tag_id => params[:tag_id])
+      .destroy
+      .to_json
   end
 
   delete "/users/:user_id/projects/:project_id/tasks/:task_id" do
-
+    task = Task.get(params[:task_id])
+    task.tags.all.destroy
+    task.time_entries.all.destroy
+    task.destroy.to_json
   end
 
   delete "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" << 
-    ":time_entry_id" do
-
+         ":time_entry_id" do
+    time_entry = TimeEntry.get(params[:time_entry_id])
+    time_entry.destroy.to_json
   end
 
   #All GET requests
@@ -93,14 +101,14 @@ class API < Sinatra::Base
   end
 
   get "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" <<
-    ":time_entry_id" do
+      ":time_entry_id" do
     TimeEntry.get(params[:time_entry_id]).to_json
   end
 
   #All POST requests
   post "/tags" do
     tag = Tag.create(:name => params[:name],
-      :tasks => params[:tasks] || [])
+                     :tasks => params[:tasks] || [])
     tag.to_json if tag.valid?
   end
 
@@ -112,8 +120,8 @@ class API < Sinatra::Base
   post "/users/:user_id/projects" do
     user = User.get(params[:user_id])
     project = Project.create(:name => params[:name],
-      :description => params[:description],
-      :users => [user])
+                             :description => params[:description],
+                             :users => [user])
     project.to_json if project.valid?
   end
 
@@ -128,8 +136,8 @@ class API < Sinatra::Base
   post "/users/:user_id/projects/:project_id/tasks" do
     project = Project.get(params[:project_id])
     task = Task.create(:name => params[:name],
-      :description => params[:description],
-      :project => project)
+                       :description => params[:description],
+                       :project => project)
     if task.valid?
       project.tasks << task
       project.save
@@ -140,9 +148,9 @@ class API < Sinatra::Base
   post "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries" do
     task = Task.get(params[:task_id])
     time_entry = TimeEntry.create(:start_time => params[:start_time],
-     :end_time => params[:end_time],
-     :type => params[:type],
-     :task => task)
+                                  :end_time => params[:end_time],
+                                  :type => params[:type],
+                                  :task => task)
     if time_entry.valid?
       task.time_entries << time_entry
       task.save
@@ -160,28 +168,28 @@ class API < Sinatra::Base
   put "/users/:user_id" do
     user = User.get(params[:user_id])
     user.update(:username => params[:username] || user.username,
-      :active => params[:active] || user.active,
-      :email => params[:email] || user.email)
+                :active => params[:active] || user.active,
+                :email => params[:email] || user.email)
     user.to_json if user.valid?
   end
 
   put "/users/:user_id/projects/:project_id" do
     project = Project.get(params[:project_id])
     project.update(:name => params[:name] || project.name,
-      :description => params[:description] || project.description,
-      :deleted => params[:deleted] || project.deleted)
+                   :description => params[:description] || project.description,
+                   :deleted => params[:deleted] || project.deleted)
     project.to_json if project.valid?
   end
 
   put "/users/:user_id/projects/:project_id/tasks/:task_id" do
     task = Task.get(params[:task_id])
     task.update(:name => params[:name] || task.name, 
-      :description => params[:description] || task.description)
+                :description => params[:description] || task.description)
     task.to_json if task.valid?
   end
 
   put "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" <<
-    ":time_entry_id" do
+      ":time_entry_id" do
 
     time_entry = TimeEntry.get(params[:time_entry_id])
     time_entry.update(:end_time => params[:end_time] || time_entry.end_time)

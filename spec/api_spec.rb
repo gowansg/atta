@@ -97,33 +97,28 @@ describe API do
       it "returns the specified task" do
         project = Fabricate(:project_with_tasks, users: [@user])
         get "/users/#{@user.id}/projects/#{project.id}/tasks/" <<
-          "#{project.tasks.first.id}"
-
+            "#{project.tasks.first.id}"
         last_response.body.should eql project.tasks.first.to_json
       end
     end
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
-      "time_entries" do
-
+            "time_entries" do
       it "returns all time entries for the specified task" do
         project = Fabricate(:project_with_time_entries)
         get "/users/#{project.users.first.id}/projects/#{project.id}/tasks/" <<
-          "#{project.tasks.first.id}/time_entries"
-        
+            "#{project.tasks.first.id}/time_entries"
         last_response.body.should eql project.tasks.first.time_entries.to_json
       end
     end
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
-      "time_entries/:time_entry_id" do
-
+            "time_entries/:time_entry_id" do
       it "returns the specified time entry" do
         project = Fabricate(:project_with_time_entries)
         task = project.tasks.first
         get "/users/#{project.users.first.id}/projects/#{project.id}/tasks/" <<
-          "#{task.id}/time_entries/#{task.time_entries.first.id}"
-        
+            "#{task.id}/time_entries/#{task.time_entries.first.id}"
         last_response.body.should eql task.time_entries.first.to_json
       end
     end
@@ -149,13 +144,12 @@ describe API do
     context "/users/:user_id/projects" do
       it "creates and returns the project for the specified user" do
         post "/users/#{@user.id}/projects", 
-          Fabricate.build(:project, name: "POST project").attributes
+             Fabricate.build(:project, name: "POST project").attributes
         last_response.body.should eql @user.projects.last.to_json
       end
     end
 
     context "/users/:user_id/projects/:project_id/contributors" do
-
     end
 
     context "/users/:user_id/projects/:project_id/tags" do
@@ -163,24 +157,21 @@ describe API do
 
     context "/users/:user_id/projects/:project_id/tasks" do
       it "returns a task after creating and assigning it to the " << 
-        "given project" do
-        
+         "given project" do
         post "/users/#{@user.id}/projects/#{@user.projects.first.id}/tasks",
-          Fabricate.build(:task, name: "POST task").attributes
+             Fabricate.build(:task, name: "POST task").attributes
         last_response.body.should eql @user.projects.first.tasks.last.to_json
       end
     end
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
-      "time_entries" do
-
+            "time_entries" do
       it "returns a time entry after creating it and assigning it to the " << 
-        "given task" do
-
+         "given task" do
         project = @user.projects.first
         post "/users/#{@user.id}/projects/#{project.id}/tasks/" << 
-          "#{project.tasks.first.id}/time_entries",
-          Fabricate.build(:time_entry).attributes
+             "#{project.tasks.first.id}/time_entries",
+             Fabricate.build(:time_entry).attributes
         
         last_response.body.should eql project.tasks
           .first
@@ -218,8 +209,8 @@ describe API do
         name = "an updated name"
         description = "an updated description"
         put "/users/#{@project.users.first.id}/projects/#{@project.id}",
-          :name => name,
-          :description => description
+            :name => name,
+            :description => description
         @project.reload
         last_response.body.should eql @project.to_json
         @project.name.should eql name
@@ -234,7 +225,7 @@ describe API do
         user = project.users.first
         updated_name = "put test 2"
         put "/users/#{user.id}/projects/#{project.id}/tasks/#{task.id}",
-          :name => updated_name
+            :name => updated_name
         task.reload
         last_response.body.should eql task.to_json
         task.name.should eql updated_name
@@ -242,16 +233,14 @@ describe API do
     end
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" <<
-      "time_entries/:time_entry_id" do
-      
+            "time_entries/:time_entry_id" do
       it "updates the specified time entry" do
         time_entry = Fabricate(:time_entry)
         task = time_entry.task
         user = task.project.users.first
         end_time = Time.now + (60 * 60)
         put "/users/#{user.id}/projects/#{task.project.id}/tasks/#{task.id}/" <<
-          "time_entries/#{time_entry.id}", 
-          :end_time => end_time
+            "time_entries/#{time_entry.id}", :end_time => end_time
 
         time_entry.reload
         last_response.body.should eql time_entry.to_json
@@ -295,8 +284,7 @@ describe API do
     end
 
     context "/users/:user_id/projects/:project_id/contributors/" << 
-      ":contributor_id" do
-      
+            ":contributor_id" do
       it "removes the specified user from the project" do
         project = Fabricate(:project_with_five_users)
         user = project.users.first
@@ -321,13 +309,29 @@ describe API do
     end
 
     context "/users/:user_id/projects/:projcet_id/tasks/:task_id" do
-
+      it "deletes the task" do
+        project = Fabricate(:project_with_tasks)
+        user = project.users.first
+        task = project.tasks.first
+        delete "/users/#{user.id}/projects/#{project.id}/tasks/#{task.id}"
+        last_response.body.should eql true.to_json
+        project.reload
+        project.tasks.include?(task).should eql false
+      end
     end
 
     context "/users/:user_id/projects/:project_id/tasks/:task_id/" << 
-      "time_entries/:time_entry_id" do
-
-
+            "time_entries/:time_entry_id" do
+      it "deletes the specified time entry" do
+        project = Fabricate(:project_with_time_entries)
+        project.tasks << task = Fabricate(:task_with_time_entries)
+        time_entry = task.time_entries.first
+        delete "/users/#{project.users.first.id}/projects/#{project.id}/" <<
+               "tasks/#{task.id}/time_entries/#{time_entry.id}"
+        last_response.body.should eql true.to_json
+        task.reload
+        task.time_entries.include?(time_entry).should eql false
+      end
     end
   end
 end

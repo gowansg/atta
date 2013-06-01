@@ -12,7 +12,7 @@ class Project
   property :deleted, Boolean, :default => false, :required => true
   property :deleted_on, DateTime
 
+  has n, :tasks
   has n, :users, :through => Resource
-  has n, :tasks, :through => Resource
   has n, :tags, :through => Resource
 end
