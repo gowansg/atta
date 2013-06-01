@@ -56,10 +56,6 @@ class API < Sinatra::Base
   end
 
   #All GET requests
-  get "/" do
-
-  end
-  
   get "/tags" do
     Tag.all.to_json
   end
