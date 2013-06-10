@@ -16,8 +16,6 @@ describe API do
   before :all do
     @user = Fabricate(:user)
     @project = Fabricate(:project)
-    @tags = []
-    10.times { @tags << Fabricate(:tag) }
   end
 
   after :each do
@@ -30,16 +28,20 @@ describe API do
   describe "GET" do
     context "/tags" do
       it "returns all tags" do
+        tags = []
+        10.times { |i| tags << Fabricate(:tag) }
         get "/tags"
-        last_response.body.should eql @tags.to_json
+        last_response.body.should eql tags.to_json
       end
     end
     
     context "/tags/:tag_id" do
       it "returns the tag with the specified id" do
-        @tags.each_index do |i|
-          get "/tags/#{i + 1}"
-          last_response.body.should eql @tags[i].to_json
+        tags = []
+        5.times { tags << Fabricate(:tag) }
+        tags.each_index do |i|
+          get "/tags/#{tags[i].id}"
+          last_response.body.should eql tags[i].to_json
         end
       end
     end 
@@ -53,6 +55,7 @@ describe API do
 
     context "/users/:user_id/projects" do
       it "returns all the projects the specified user contributes to" do
+        user = Fabricate
         projects = [
           Fabricate(:project, users: [@user]), 
           Fabricate(:project, users: [@user])
@@ -150,9 +153,27 @@ describe API do
     end
 
     context "/users/:user_id/projects/:project_id/contributors" do
+      it "adds an existing user as a contributor to the specified project" do
+        user = Fabricate(:user)
+        project = Fabricate(:project, users: [user])
+        post "/users/#{user.id}/projects/#{project.id}/contributors",
+             @user.attributes
+        last_response.body.should eql @user.to_json
+        project.reload
+        project.users.include?(@user).should eql true
+      end
     end
 
     context "/users/:user_id/projects/:project_id/tags" do
+      it "adds an existing tag to the specified project" do
+        tag = Fabricate(:tag)
+        project = Fabricate(:project)
+        post "/users/#{project.users.first.id}/projects/#{project.id}/tags",
+             tag.attributes
+        last_response.body.should eql tag.to_json
+        project.reload
+        project.tags.include?(tag).should eql true
+      end
     end
 
     context "/users/:user_id/projects/:project_id/tasks" do

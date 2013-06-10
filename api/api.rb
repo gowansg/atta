@@ -103,8 +103,7 @@ class API < Sinatra::Base
 
   #All POST requests
   post "/tags" do
-    tag = Tag.create(:name => params[:name],
-                     :tasks => params[:tasks] || [])
+    tag = Tag.create(:name => params[:name], :tasks => params[:tasks] || [])
     tag.to_json if tag.valid?
   end
 
@@ -122,11 +121,19 @@ class API < Sinatra::Base
   end
 
   post "/users/:user_id/projects/:project_id/contributors" do
-  
+    project = Project.get(params[:project_id])
+    contributor = User.get(params[:id])
+    project.users << contributor
+    project.save
+    contributor.to_json
   end
 
   post "/users/:user_id/projects/:project_id/tags" do
-
+    project = Project.get(params[:project_id])
+    tag = Tag.get(params[:id])
+    project.tags << tag
+    project.save
+    tag.to_json
   end
 
   post "/users/:user_id/projects/:project_id/tasks" do
@@ -186,7 +193,6 @@ class API < Sinatra::Base
 
   put "/users/:user_id/projects/:project_id/tasks/:task_id/time_entries/" <<
       ":time_entry_id" do
-
     time_entry = TimeEntry.get(params[:time_entry_id])
     time_entry.update(:end_time => params[:end_time] || time_entry.end_time)
     time_entry.to_json if time_entry.valid?
