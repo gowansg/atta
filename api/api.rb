@@ -7,6 +7,11 @@ class API < Sinatra::Base
   register Sinatra::RespondWith
   #respond_to :json
 
+  # before "/users/:user_id/*" do
+  #   resource_owner_id = AccessToken.get(params[:access_token]).user_id
+  #   halt 403 unless User.get(params[:user_id]) == User.get(resource_owner_id)
+  # end
+
   # All DELETE requests
   delete "/tags/:tag_id" do
     tag = Tag.get(params[:tag_id])

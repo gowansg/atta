@@ -1,6 +1,3 @@
-require "data_mapper"
-require_relative "time_entry"
-
 class Task
   include DataMapper::Resource 
 

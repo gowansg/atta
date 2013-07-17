@@ -2,8 +2,12 @@ require "data_mapper"
 require "dm-rspec"
 require "fabrication"
 require_relative "../config/config"
+
 Dir[File.join(File.dirname(__FILE__), "..", "lib", "models", "*.rb")]
   .each{|file| require file}
+
+ Dir[File.join(File.dirname(__FILE__), "..", "lib", "models", "OAuth2", "*.rb")]
+  .each{|file| require file} 
 
 RSpec.configure do |config|
   config.include(DataMapper::Matchers)

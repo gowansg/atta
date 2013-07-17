@@ -40,7 +40,7 @@ describe API do
         tags = []
         5.times { tags << Fabricate(:tag) }
         tags.each_index do |i|
-          get "/tags/#{tags[i].id}"
+          get "tags/#{tags[i].id}"
           last_response.body.should eql tags[i].to_json
         end
       end
