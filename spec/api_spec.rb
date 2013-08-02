@@ -26,6 +26,23 @@ describe API do
   end
 
   describe "GET" do
+    context "/oauth/authorize" do
+      it "presents the resource owner with a notifcation about authorizing " <<
+         "the thrid party application making the request" do
+
+      end
+
+      it "notifies the resource owner the request is invalid if the " << 
+         ":client_id parameter does belong to any regisitered clients" do
+
+      end
+
+      it "notifies the resource owner the request is invalid if the " <<
+         ":redirect_uri doesn't match the client's regisitered redirect_uri " do
+
+      end
+    end
+
     context "/tags" do
       it "returns all tags" do
         tags = []

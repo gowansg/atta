@@ -7,10 +7,34 @@ class API < Sinatra::Base
   register Sinatra::RespondWith
   #respond_to :json
 
-  # before "/users/:user_id/*" do
-  #   resource_owner_id = AccessToken.get(params[:access_token]).user_id
-  #   halt 403 unless User.get(params[:user_id]) == User.get(resource_owner_id)
-  # end
+  before "/users/:user_id/*" do
+    resource_owner_id = AccessToken.get(params[:access_token]).user_id
+    halt 403 unless params[:user_id] == resource_owner_id
+  end
+
+  get "/oauth/authorize" do
+    client = Client.first(client_id: params[:client_id])
+
+    haml :authorization_notice if client && 
+                                  client.redirect_uri
+                                        .casesmp(params[:redirect_uri])
+                                        .zero?
+    
+    haml :invalid_client_notice 
+  end
+
+  post "/oauth/authorize" do
+
+  end
+
+  post "/oauth/access_token" do
+    code = params[:code]
+    grant_type = params[:grant_type]
+    client_id = params[:client_id]
+    client_secred = params[:client_secred]
+
+    Client.first(secret: params[:client_secred])
+  end
 
   # All DELETE requests
   delete "/tags/:tag_id" do
@@ -36,15 +60,15 @@ class API < Sinatra::Base
   delete "/users/:user_id/projects/:project_id/contributors/:contributor_id" do
     ProjectUser.all(:user_id => params[:contributor_id], 
                     :project_id => params[:project_id])
-      .destroy
-      .to_json
+               .destroy
+               .to_json
   end
 
   delete "/users/:user_id/projects/:project_id/tags/:tag_id" do
     ProjectTag.all(:project_id => params[:project_id], 
                    :tag_id => params[:tag_id])
-      .destroy
-      .to_json
+              .destroy
+              .to_json
   end
 
   delete "/users/:user_id/projects/:project_id/tasks/:task_id" do
