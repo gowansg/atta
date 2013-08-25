@@ -1,4 +1,4 @@
-class AccessToken
+class AccessToken  
   include DataMapper::Resource
 
   property :value, 
